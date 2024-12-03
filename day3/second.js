@@ -1,108 +1,66 @@
 const input = await Deno.readTextFile("./input", "UTF-8");
 
 let DO = true;
+let MUL = false;
 
-let m = false;
-let u = false;
-let l = false;
-let p0 = false;
-let a = null;
+let a = "";
 let comma = false;
-let b = null;
+let b = "";
 
 let total = 0;
 
 const defaultValues = () => {
-  m = false;
-  u = false;
-  l = false;
-  p0 = false;
-  a = null;
+  MUL = null;
+  a = "";
   comma = false;
-  b = null;
+  b = "";
 }
 
-const content = input.trim().replaceAll("don't", "N").replaceAll("do", "Y")
-
-for(const ch of content.split("")) {
-  const c = ch.trim();
-  switch(c){
+for (const c of input.trim().replaceAll("don't", "N").replaceAll("do", "Y").replaceAll("mul(", "M").split("")) {
+  switch (c) {
     case 'Y':
-      if(!m && !u && !l && !p0 && a == null && !comma && b == null && !DO) {
+      if (!MUL && a == "" && !comma && b == "" && !DO) {
         DO = true;
-        console.log("enabled");
       } else {
         defaultValues()
       }
       break;
     case 'N':
-      if(!m && !u && !l && !p0 && a == null && !comma && b == null && DO) {
+      if (!MUL && a == "" && !comma && b == "" && DO) {
         DO = false;
-        console.log("disabled");
       } else {
         defaultValues()
       }
       break;
-    case 'm':
-      if(!m && !u && !l && !p0 && a == null && !comma && b == null && DO) {
-        m = true;
-      } else {
-        defaultValues()
-      }
-      break;
-    case 'u':
-      if(m && !u){
-        u = true;
-      } else {
-        defaultValues()
-      }
-      break;
-    case 'l':
-      if(m && u && !l){
-        l = true;
-      } else {
-        defaultValues()
-      }
-      break;
-    case '(':
-      if(m && u && l && !p0){
-        p0 = true;
+    case 'M':
+      if (!MUL && a == "" && !comma && b == "" && DO) {
+        MUL = true;
       } else {
         defaultValues()
       }
       break;
     case ')':
-      if(m && u && l && p0 && a != null && comma && b != null) {
+      if (MUL && a != "" && comma && b != "") {
         total += Number(a) * Number(b)
       }
       defaultValues()
       break;
     case ',':
-      if(m && u && l && p0 && a != null && !comma){
+      if (MUL && a != "" && !comma) {
         comma = true;
       } else {
         defaultValues()
       }
       break;
     default:
-      if(!Number.isNaN(Number(c)) && m && u && l && p0 && !comma) {
-        if(a == null){
-          a = c;
-        } else {
-          a = `${a}${c}`;
-        }
-      } else if(!Number.isNaN(Number(c)) && m && u && l && p0 && a != null && comma) {
-        if(b == null){
-          b = c;
-        } else {
-          b = `${b}${c}`;
-        }
+      if (!Number.isNaN(Number(c)) && MUL && !comma) {
+        a = `${a}${c}`;
+      } else if (!Number.isNaN(Number(c)) && MUL && a != "" && comma) {
+        b = `${b}${c}`;
       } else {
         defaultValues()
       }
-      
   }
 }
-
 
 console.log(total);
