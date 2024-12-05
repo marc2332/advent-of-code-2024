@@ -8,7 +8,16 @@ const INPUT: &str = include_str!("../input");
 fn main() {
     let content = INPUT.split("\n\n").collect::<Vec<&str>>();
     let rules_lines = content.first().unwrap();
-    let updates_lines = content.get(1).unwrap();
+    let updates_lines = content
+        .get(1)
+        .unwrap()
+        .lines()
+        .map(|l| {
+            l.split(',')
+                .map(|n| n.parse().unwrap())
+                .collect::<Vec<i32>>()
+        })
+        .collect::<Vec<_>>();
     let mut rules = HashMap::<i32, Vec<i32>>::default();
 
     for rule in rules_lines.lines() {
@@ -24,14 +33,10 @@ fn main() {
     let mut middle_nums = Vec::<i32>::new();
     let mut unordered_updates = Vec::new();
 
-    for update in updates_lines.lines() {
-        let nums = update
-            .split(',')
-            .map(|n| n.parse().unwrap())
-            .collect::<Vec<i32>>();
+    for nums in &updates_lines {
         let mut checked_nums = HashSet::new();
         let mut failed = false;
-        for num in &nums {
+        for num in nums {
             if let Some(num_rules) = rules.get(&num) {
                 if num_rules.iter().any(|r| checked_nums.contains(r)) {
                     failed = true;
@@ -44,7 +49,7 @@ fn main() {
         if !failed {
             middle_nums.push(nums[nums.len() / 2]);
         } else {
-            unordered_updates.push(update);
+            unordered_updates.push(nums.clone());
         }
     }
 
@@ -52,11 +57,7 @@ fn main() {
 
     println!("FIRST: {total:?}"); // 5948
 
-    for update in unordered_updates {
-        let mut nums = update
-            .split(',')
-            .map(|n| n.parse().unwrap())
-            .collect::<Vec<i32>>();
+    for mut nums in unordered_updates {
         nums.sort_by(|a, b| match rules.get(&a).cloned() {
             Some(rules) => {
                 if rules.contains(&b) {
