@@ -25,7 +25,7 @@ fn main() {
         }
     }
 
-    println!("P2 {total}");
+    println!("P2 {total}"); // 489
 
     let mut total = 0;
 
@@ -40,7 +40,7 @@ fn main() {
         }
     }
 
-    println!("P2 {total}");
+    println!("P2 {total}"); // 1086
 }
 
 fn p1((y, x): (usize, usize), data: &[Vec<u8>], solutions: &mut HashSet<(usize, usize)>) {
